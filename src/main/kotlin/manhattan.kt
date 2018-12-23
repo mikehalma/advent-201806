@@ -1,6 +1,5 @@
 import java.io.File
 import java.lang.Math.abs
-import java.lang.Math.max
 import java.nio.charset.Charset
 
 data class Point(val x: Int, val y:Int)
@@ -59,12 +58,23 @@ fun getNearestTargets(grid: Point, targets: List<Point>): List<PointNearest> {
                     val nearTargets = getNeighboursInGrid(grid, point, distance).filter { targets.contains(it) }
                     if (nearTargets.size == 1) {
                         result.add(PointNearest(x, y, targets.indexOf(nearTargets[0])))
+                        break
                     } else if (nearTargets.size > 1) {
                         result.add(PointNearest(x, y, -1))
+                        break
                     }
                 }
             }
         }
     }
     return result
+}
+
+fun getInfiniteTargets(grid: Point, pointNearests: List<PointNearest>): List<Int> {
+    val targets = mutableListOf<Int>()
+    targets.addAll(pointNearests.filter {it.x == 0}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
+    targets.addAll(pointNearests.filter {it.y == 0}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
+    targets.addAll(pointNearests.filter {it.x == grid.x}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
+    targets.addAll(pointNearests.filter {it.y == grid.y}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
+    return targets.distinct()
 }

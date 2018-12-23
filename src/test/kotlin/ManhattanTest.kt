@@ -82,4 +82,62 @@ class ManhattanTest {
         assertThat(getNearestTargets(Point(1, 1), listOf(Point(1, 1))), containsInAnyOrder(*expected.toTypedArray()))
     }
 
+    @Test
+    fun getNearestTargets_harder() {
+        val expected = listOf(PointNearest(0, 0, -1),
+            PointNearest(0, 1, 0),
+            PointNearest(0, 2, -1),
+            PointNearest(1, 0, 0),
+            PointNearest(1, 1, -1),
+            PointNearest(1, 2, 1),
+            PointNearest(2, 0, -1),
+            PointNearest(2, 1, 1),
+            PointNearest(2, 2, -1)
+        )
+        assertThat(getNearestTargets(Point(2, 2), listOf(Point(0, 0), Point(2, 2))), containsInAnyOrder(*expected.toTypedArray()))
+    }
+
+    @Test
+    fun getInfiniteTargets_simple() {
+        val expected = listOf(0, 1)
+        val grid = Point(2, 2)
+        val allPoints = listOf(PointNearest(0, 0, -1),
+            PointNearest(0, 1, 0),
+            PointNearest(0, 2, -1),
+            PointNearest(1, 0, 0),
+            PointNearest(1, 1, -1),
+            PointNearest(1, 2, 1),
+            PointNearest(2, 0, -1),
+            PointNearest(2, 1, 1),
+            PointNearest(2, 2, -1)
+            )
+        assertThat(getInfiniteTargets(grid, allPoints), `is`(expected))
+    }
+
+    @Test
+    fun getInfiniteTargets_harder() {
+        val expected = listOf(2)
+        val grid = Point(3, 3)
+        // below are the results of a 4x4 grid with targets 0=0,0, 1=1,1, 2=3,3
+        val allPoints = listOf(
+            PointNearest(0, 0, -1),
+            PointNearest(0, 1, -1),
+            PointNearest(0, 2, -1),
+            PointNearest(0, 3, -1),
+            PointNearest(1, 0, -1),
+            PointNearest(1, 1, -1),
+            PointNearest(1, 2, 1),
+            PointNearest(1, 3, -1),
+            PointNearest(2, 0, -1),
+            PointNearest(2, 1, 1),
+            PointNearest(2, 2, -1),
+            PointNearest(2, 3, 2),
+            PointNearest(3, 0, -1),
+            PointNearest(3, 1, -1),
+            PointNearest(3, 2, 2),
+            PointNearest(3, 3, -1)
+        )
+        assertThat(getInfiniteTargets(grid, allPoints), `is`(expected))
+    }
+
 }
