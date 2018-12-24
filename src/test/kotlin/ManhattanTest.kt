@@ -1,30 +1,37 @@
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
+import org.junit.Ignore
 import org.junit.Test
 
 class ManhattanTest {
 
     @Test
     fun getGrid_singleTarget() {
-        assertThat(getGrid(listOf(Point(1, 1))), `is`(Point(1, 1)))
+        assertThat(getGrid(listOf(Target(0, Point(1, 1)))), `is`(Grid(Point(1, 1))))
     }
 
     @Test
     fun getGrid_2Targets() {
-        assertThat(getGrid(listOf(Point(1, 1), Point(1, 2))), `is`(Point(1, 2)))
+        assertThat(getGrid(listOf(Target(0, Point(1, 1)), Target(1, Point(1, 2)))), `is`(Grid(Point(1, 2))))
     }
 
     @Test
     fun loadTargets_example() {
-        val expected = listOf(Point(1, 1), Point(1, 6), Point(8, 3), Point(3, 4),
-            Point(5, 5), Point(8, 9))
+        val expected = listOf(
+            Target(0, Point(1, 1)),
+            Target(1, Point(1, 6)),
+            Target(2, Point(8, 3)),
+            Target(3, Point(3, 4)),
+            Target(4, Point(5, 5)),
+            Target(5, Point(8, 9))
+        )
         assertThat(loadTargets("example.txt"), `is`(expected))
     }
 
     @Test
     fun getGrid_manyTargets() {
-        assertThat(getGrid(loadTargets("example.txt")), `is`(Point(8, 9)))
+        assertThat(getGrid(loadTargets("example.txt")), `is`(Grid(Point(8, 9))))
     }
 
     @Test
@@ -69,7 +76,7 @@ class ManhattanTest {
     fun getNeighboursInGrid_length2() {
         val expected = listOf(Point(0, 2), Point(1, 1), Point(1, 3), Point(2, 0),
             Point(3, 1), Point(3, 3))
-        assertThat(getNeighboursInGrid(Point(3, 3), Point(2, 2), 2), containsInAnyOrder(*expected.toTypedArray()))
+        assertThat(getNeighboursInGrid(Grid(Point(3, 3)), Point(2, 2), 2), containsInAnyOrder(*expected.toTypedArray()))
     }
 
     @Test
@@ -79,7 +86,7 @@ class ManhattanTest {
             PointNearest(1, 0, 0),
             PointNearest(1, 1, 0)
         )
-        assertThat(getNearestTargets(Point(1, 1), listOf(Point(1, 1))), containsInAnyOrder(*expected.toTypedArray()))
+        assertThat(getNearestTargets(Grid(Point(1, 1)), listOf(Target(0, Point(1, 1)))), containsInAnyOrder(*expected.toTypedArray()))
     }
 
     @Test
@@ -94,13 +101,13 @@ class ManhattanTest {
             PointNearest(2, 1, 1),
             PointNearest(2, 2, 1)
         )
-        assertThat(getNearestTargets(Point(2, 2), listOf(Point(0, 0), Point(2, 2))), containsInAnyOrder(*expected.toTypedArray()))
+        assertThat(getNearestTargets(Grid(Point(2, 2)), listOf(Target(0, Point(0, 0)), Target(1, Point(2, 2)))), containsInAnyOrder(*expected.toTypedArray()))
     }
 
     @Test
     fun getInfiniteTargets_simple() {
         val expected = listOf(0, 1)
-        val grid = Point(2, 2)
+        val grid = Grid(Point(2, 2))
         val allPoints = listOf(PointNearest(0, 0, 0),
             PointNearest(0, 1, 0),
             PointNearest(0, 2, -1),
@@ -117,7 +124,7 @@ class ManhattanTest {
     @Test
     fun getInfiniteTargets_harder() {
         val expected = listOf(2)
-        val grid = Point(3, 3)
+        val grid = Grid(Point(3, 3))
         // below are the results of a 4x4 grid with targets 0=0,0, 1=1,1, 2=3,3
         val allPoints = listOf(
             PointNearest(0, 0, -1),
@@ -143,9 +150,9 @@ class ManhattanTest {
     @Test
     fun getFiniteTargetSize_simple() {
         val targets = listOf(
-            Point(0, 0),
-            Point(1, 1),
-            Point(3, 3)
+            Target(0, Point(0, 0)),
+            Target(1, Point(1, 1)),
+            Target(2, Point(3, 3))
         )
         assertThat(getFiniteTargetsMaxSize(targets), `is`(3))
     }
@@ -156,6 +163,7 @@ class ManhattanTest {
     }
 
     @Test
+    @Ignore
     fun getFiniteTargets_part1() {
         assertThat(getFiniteTargetsMaxSize(loadTargets("puzzleInput.txt")), `is`(5358))
     }
