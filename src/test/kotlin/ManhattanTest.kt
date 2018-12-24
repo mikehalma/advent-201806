@@ -152,6 +152,11 @@ class ManhattanTest {
 
     @Test
     fun getFiniteTargets_example() {
-//        assertThat(getFiniteTargetsSize(loadTargets("example.txt"), `is`()))
+        assertThat(getFiniteTargetsMaxSize(loadTargets("example.txt")), `is`(17))
+    }
+
+    @Test
+    fun getFiniteTargets_part1() {
+        assertThat(getFiniteTargetsMaxSize(loadTargets("puzzleInput.txt")), `is`(5358))
     }
 }
