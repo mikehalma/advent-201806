@@ -55,35 +55,47 @@ fun getNeighboursInGrid(grid: Grid, point: Point, distance: Int): List<Point> {
 fun getNearestTargets(grid: Grid, targets: List<Target>): List<PointNearest> {
     val targetPoints = targets.map {it.point to it.id}.toMap()
     val result = mutableListOf<PointNearest>()
-    (0..grid.maxPoint.x).forEach { x->
-        (0..grid.maxPoint.y).forEach { y->
-            val point = Point(x, y)
-            if (targets.map{ it.point }.contains(point)) {
-                result.add(PointNearest(x, y, targetPoints.filter {it.key == point}.values.first()))
-            } else {
-                for (distance in (1..(grid.maxPoint.x + grid.maxPoint.y))) {
-                    val nearTargets = getNeighboursInGrid(grid, point, distance).filter { targetPoints.keys.contains(it) }
-                    if (nearTargets.size == 1) {
-                        result.add(PointNearest(x, y, targetPoints.filter {it.key == nearTargets[0]}.values.first()))
-                        break
-                    } else if (nearTargets.size > 1) {
-                        result.add(PointNearest(x, y, -1))
-                        break
-                    }
-                }
-            }
+    (0..grid.maxPoint.x).flatMap { x->
+        (0..grid.maxPoint.y).map { y->
+            addPointNearest(grid, Point(x, y), targetPoints, result)
         }
     }
     return result
 }
 
+private fun addPointNearest(
+    grid: Grid,
+    point: Point,
+    targetPoints: Map<Point, Int>,
+    result: MutableList<PointNearest>
+) {
+    result.addAll( (0..(grid.maxPoint.x + grid.maxPoint.y))
+        .map {getTargetNeighbours(grid, point, it, targetPoints)}
+        .filter { it.isNotEmpty() }
+        .take(1)
+        .map { if (it.size == 1) targetPoints[it[0]] else -1 }
+        .map { PointNearest(point.x, point.y, it?:-1)}
+
+    )
+
+}
+
+private fun getTargetNeighbours(
+    grid: Grid,
+    point: Point,
+    distance: Int,
+    targetPoints: Map<Point, Int>
+) = getNeighboursInGrid(grid, point, distance).filter { targetPoints.keys.contains(it) }
+
 fun getInfiniteTargets(grid: Grid, pointNearests: List<PointNearest>): List<Int> {
-    val targets = mutableListOf<Int>()
-    targets.addAll(pointNearests.filter {it.x == 0}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
-    targets.addAll(pointNearests.filter {it.y == 0}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
-    targets.addAll(pointNearests.filter {it.x == grid.maxPoint.x}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
-    targets.addAll(pointNearests.filter {it.y == grid.maxPoint.y}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
-    return targets.distinct()
+
+    return listOf(0, grid.maxPoint.x).flatMap {x ->
+        listOf(0, grid.maxPoint.y).flatMap {y ->
+            pointNearests.filter {it.x == x || it.y == y}
+                .filter {it.nearestTarget != -1}
+                .map {it.nearestTarget}
+        }
+    }.distinct()
 }
 
 fun getFiniteTargetsMaxSize(targets: List<Target>): Int {
@@ -97,5 +109,4 @@ fun getFiniteTargetsMaxSize(targets: List<Target>): Int {
         .groupBy {it}
         .maxBy {it.value.size}
         ?.value?.size?:0
-
 }

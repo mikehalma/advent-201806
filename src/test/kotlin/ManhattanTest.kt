@@ -60,6 +60,12 @@ class ManhattanTest {
     }
 
     @Test
+    fun getNeighbours_length0() {
+        val expected = listOf(Point(0, 0))
+        assertThat(getNeighbours(Point(0, 0), 0), containsInAnyOrder(*expected.toTypedArray()))
+    }
+
+    @Test
     fun getNeighbours_length1() {
         val expected = listOf(Point(0, 1), Point(1, 0), Point(2, 1), Point(1, 2))
         assertThat(getNeighbours(Point(1, 1), 1), containsInAnyOrder(*expected.toTypedArray()))
