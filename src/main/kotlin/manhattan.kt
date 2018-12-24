@@ -5,9 +5,9 @@ import java.nio.charset.Charset
 data class Point(val x: Int, val y:Int)
 data class PointNearest(val x: Int, val y: Int, val nearestTarget: Int)
 
-fun getGrid(points: List<Point>): Point {
-    val x = points.maxBy {it.x}?.x?:0
-    val y = points.maxBy {it.y}?.y?:0
+fun getGrid(targets: List<Point>): Point {
+    val x = targets.maxBy {it.x}?.x?:0
+    val y = targets.maxBy {it.y}?.y?:0
     return Point(x, y)
 }
 
@@ -52,7 +52,7 @@ fun getNearestTargets(grid: Point, targets: List<Point>): List<PointNearest> {
         (0..grid.y).forEach { y->
             val point = Point(x, y)
             if (targets.contains(point)) {
-                result.add(PointNearest(x, y, -1))
+                result.add(PointNearest(x, y, targets.indexOf(point)))
             } else {
                 for (distance in (1..(grid.x + grid.y))) {
                     val nearTargets = getNeighboursInGrid(grid, point, distance).filter { targets.contains(it) }
@@ -77,4 +77,18 @@ fun getInfiniteTargets(grid: Point, pointNearests: List<PointNearest>): List<Int
     targets.addAll(pointNearests.filter {it.x == grid.x}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
     targets.addAll(pointNearests.filter {it.y == grid.y}.filter {it.nearestTarget != -1}.map {it.nearestTarget}.distinct())
     return targets.distinct()
+}
+
+fun getFiniteTargetsMaxSize(targets: List<Point>): Int {
+    val grid = getGrid(targets)
+    val nearestTargets = getNearestTargets(grid, targets)
+    val infiniteTargets = getInfiniteTargets(grid, nearestTargets)
+    return nearestTargets
+        .filter {it.nearestTarget != -1}
+        .map {it.nearestTarget}
+        .filter {!infiniteTargets.contains(it)}
+        .groupBy {it}
+        .maxBy {it.value.size}
+        ?.value?.size?:0
+
 }

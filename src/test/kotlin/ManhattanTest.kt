@@ -77,14 +77,14 @@ class ManhattanTest {
         val expected = listOf(PointNearest(0, 0, 0),
             PointNearest(0, 1, 0),
             PointNearest(1, 0, 0),
-            PointNearest(1, 1, -1)
+            PointNearest(1, 1, 0)
         )
         assertThat(getNearestTargets(Point(1, 1), listOf(Point(1, 1))), containsInAnyOrder(*expected.toTypedArray()))
     }
 
     @Test
     fun getNearestTargets_harder() {
-        val expected = listOf(PointNearest(0, 0, -1),
+        val expected = listOf(PointNearest(0, 0, 0),
             PointNearest(0, 1, 0),
             PointNearest(0, 2, -1),
             PointNearest(1, 0, 0),
@@ -92,7 +92,7 @@ class ManhattanTest {
             PointNearest(1, 2, 1),
             PointNearest(2, 0, -1),
             PointNearest(2, 1, 1),
-            PointNearest(2, 2, -1)
+            PointNearest(2, 2, 1)
         )
         assertThat(getNearestTargets(Point(2, 2), listOf(Point(0, 0), Point(2, 2))), containsInAnyOrder(*expected.toTypedArray()))
     }
@@ -101,7 +101,7 @@ class ManhattanTest {
     fun getInfiniteTargets_simple() {
         val expected = listOf(0, 1)
         val grid = Point(2, 2)
-        val allPoints = listOf(PointNearest(0, 0, -1),
+        val allPoints = listOf(PointNearest(0, 0, 0),
             PointNearest(0, 1, 0),
             PointNearest(0, 2, -1),
             PointNearest(1, 0, 0),
@@ -109,7 +109,7 @@ class ManhattanTest {
             PointNearest(1, 2, 1),
             PointNearest(2, 0, -1),
             PointNearest(2, 1, 1),
-            PointNearest(2, 2, -1)
+            PointNearest(2, 2, 1)
             )
         assertThat(getInfiniteTargets(grid, allPoints), `is`(expected))
     }
@@ -140,4 +140,18 @@ class ManhattanTest {
         assertThat(getInfiniteTargets(grid, allPoints), `is`(expected))
     }
 
+    @Test
+    fun getFiniteTargetSize_simple() {
+        val targets = listOf(
+            Point(0, 0),
+            Point(1, 1),
+            Point(3, 3)
+        )
+        assertThat(getFiniteTargetsMaxSize(targets), `is`(3))
+    }
+
+    @Test
+    fun getFiniteTargets_example() {
+//        assertThat(getFiniteTargetsSize(loadTargets("example.txt"), `is`()))
+    }
 }
