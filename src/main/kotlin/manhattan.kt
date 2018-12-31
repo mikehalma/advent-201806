@@ -110,3 +110,16 @@ fun getFiniteTargetsMaxSize(targets: List<Target>): Int {
         .maxBy {it.value.size}
         ?.value?.size?:0
 }
+
+fun getTotalTargetDistance(point: Point, targets: List<Target>): Int {
+    return targets.map {getDistance(it.point, point)}.sum()
+}
+
+fun getPointsWithinDistance(targets: List<Target>, distance: Int): List<Point> {
+    val grid = getGrid(targets)
+    return (0..grid.maxPoint.x).flatMap {x ->
+        (0..grid.maxPoint.y)
+            .map {y -> Point(x, y)}
+            .filter {getTotalTargetDistance(it, targets) < distance}
+    }
+}

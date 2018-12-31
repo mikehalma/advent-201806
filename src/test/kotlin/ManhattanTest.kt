@@ -173,4 +173,48 @@ class ManhattanTest {
     fun getFiniteTargets_part1() {
         assertThat(getFiniteTargetsMaxSize(loadTargets("puzzleInput.txt")), `is`(5358))
     }
+
+    @Test
+    fun getTotalTargetDistance_simple() {
+        val targets = listOf(
+            Target(0, Point(1, 1)),
+            Target(1, Point(2, 2)))
+        assertThat(getTotalTargetDistance(Point(0, 0), targets), `is`(6))
+    }
+
+    @Test
+    fun getTotalTargetDistance_example() {
+        assertThat(getTotalTargetDistance(Point(4, 3), loadTargets("example.txt")), `is`(30))
+    }
+
+    @Test
+    fun getPointsWithinDistance_simple() {
+        val targets = listOf(
+            Target(0, Point(1, 1)),
+            Target(1, Point(2, 2)))
+        val expected = listOf(Point(1, 1), Point(1, 2), Point(2, 1), Point(2, 2))
+        assertThat(getPointsWithinDistance(targets, 3), containsInAnyOrder(*expected.toTypedArray()))
+    }
+
+    @Test
+    fun getPointsWithinDistanceSize_simple() {
+        val targets = listOf(
+            Target(0, Point(1, 1)),
+            Target(1, Point(2, 2)))
+        assertThat(getPointsWithinDistance(targets, 3).size, `is`(4))
+    }
+
+    @Test
+    fun getPointsWithinDistanceSize_example() {
+        assertThat(getPointsWithinDistance(loadTargets("example.txt"), 32).size, `is`(16))
+    }
+
+    @Test
+    fun getPointsWithinDistanceSize_part2() {
+        assertThat(getPointsWithinDistance(loadTargets("puzzleInput.txt"), 10000).size, `is`(37093))
+    }
+
+
+
+
 }
